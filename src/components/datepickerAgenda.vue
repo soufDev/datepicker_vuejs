@@ -40,6 +40,53 @@
     width: $day-size;
     text-align: center;
   }
+  .datepicker_days {
+    margin: 14px;
+  }
+  .datepicker_day {
+    position: relative;
+    width: $day-size;
+    height: $day-size;
+    float: left;
+    text-align: center;
+    line-height: $day-size;
+    cursor: pointer;
+    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .datepicker_day_effect {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgb(0, 151, 167);
+    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform: scale(0);
+    opacity: 0.0;
+  }
+
+  .datepicker_day_text {
+    position: relative;
+  }
+
+  .datepicker_day:hover {
+    color: #FFF;
+    .datepicker_day_effect {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+  }
+
+  .datepicker_day.selected {
+    color: #FFF;
+    .datepicker_day_effect {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+  }
+
 </style>
 <template>
   <div class="datepicker">
@@ -56,6 +103,16 @@
         {{ day }}
       </div>
     </div>
+    <div class="datepicker_days">
+      <div class="datepicker_day" :style="{width:(month.getWeekStart()*41) + 'px'}">
+      </div>
+      <div class="datepicker_day" v-on:click="selectDate(day)" v-for="day in month.getDays()" :class="{selected: isSelected(day)}">
+        <span class="datepicker_day_effect"></span>
+        <span class="datepicker_day_text">
+          {{ day.format('D') }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -64,7 +121,16 @@
     props: ['date'],
     data () {
       return {
-        days: ['L', 'M', 'M', 'J', 'V', 'S', 'D']
+        days: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
+        month: new Month(this.date.month(), this.date.year())
+      }
+    },
+    methods: {
+      isSelected: function (day) {
+        return this.date.unix() === day.unix()
+      },
+      selectDate: function (day) {
+        this.date = day.clone()
       }
     },
     computed: {
