@@ -7,7 +7,7 @@
   <div class="datepicker_container">
     <input type="text" value="{{ date_formatted }}">
     <input type="text" name="{{ name }}" value="{{ date_raw }}">
-    <datepicker-agenda v-bind:date="date"></datepicker-agenda>
+    <datepicker-agenda :date="date"></datepicker-agenda>
   </div>
 </template>
 

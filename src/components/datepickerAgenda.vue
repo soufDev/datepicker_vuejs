@@ -51,7 +51,7 @@
     text-align: center;
     line-height: $day-size;
     cursor: pointer;
-    transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1);
+    transition: color 450ms cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .datepicker_day_effect {
@@ -87,6 +87,46 @@
     }
   }
 
+  .datepicker_controls {
+    position: relative;
+    height: 56px;
+    line-height: 56px;
+    text-align: center;
+    button {
+      position: relative;
+      border:none;
+      background-color: transparent;
+      user-select: none;
+      outline:none;
+      cursor: pointer;
+      width: 56px;
+      height: 56px;
+    }
+    svg {
+      width:24px;
+      height: 24px;
+      fill: rgba(0,0,0,0.87);
+      vertical-align: middle;
+    }
+  }
+
+  .datepicker_month {
+    position: absolute;
+    top:0;
+    left:0;
+    right:0;
+    buttom: 0;
+
+  }
+
+  .datepicker_next {
+    float: right;
+  }
+
+  .datepicker_prev {
+    float: left;
+  }
+
 </style>
 <template>
   <div class="datepicker">
@@ -98,6 +138,19 @@
         {{ date_formatted }}
       </div>
     </div>
+    <div class="datepicker_controls">
+      <div class="datepicker_month">{{ month.getFormatted() }}</div>
+      <button class="datepicker_prev" @click="prevMonth()">
+        <svg viewbox="0 0 24 24">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+        </svg>
+      </button>
+      <button class="datepicker_next" @click="nextMonth()">
+        <svg viewbox="0 0 24 24">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+        </svg>
+      </button>
+    </div>
     <div class="datepicker_week">
       <div v-for="day in days" track-by="$index" class="datepicker_weekday">
         {{ day }}
@@ -106,12 +159,17 @@
     <div class="datepicker_days">
       <div class="datepicker_day" :style="{width:(month.getWeekStart()*41) + 'px'}">
       </div>
-      <div class="datepicker_day" v-on:click="selectDate(day)" v-for="day in month.getDays()" :class="{selected: isSelected(day)}">
+      <div class="datepicker_day" @click="selectDate(day)" v-for="day in month.getDays()" :class="{selected: isSelected(day)}">
         <span class="datepicker_day_effect"></span>
         <span class="datepicker_day_text">
           {{ day.format('D') }}
         </span>
       </div>
+    </div>
+
+    <div class="datepicker_actions">
+      <buton @click="">Cancel</buton>
+      <buton @click="submitDay">Ok</buton>
     </div>
   </div>
 </template>
@@ -131,6 +189,24 @@
       },
       selectDate: function (day) {
         this.date = day.clone()
+      },
+      nextMonth: function () {
+        let month = this.month.month + 1
+        let year = this.month.year
+        if (month > 11) {
+          year += 1
+          month = 0
+        }
+        this.month = new Month(month, year)
+      },
+      prevMonth: function () {
+        let month = this.month.month - 1
+        let year = this.month.year
+        if (month < 0) {
+          year -= 1
+          month = 11
+        }
+        this.month = new Month(month, year)
       }
     },
     computed: {

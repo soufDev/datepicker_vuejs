@@ -17,4 +17,8 @@ export default class Month {
   getDays () {
     return moment.range(this.start, this.end).toArray('days')
   }
+
+  getFormatted () {
+    return this.start.format('MMMM YYYY')
+  }
 }
