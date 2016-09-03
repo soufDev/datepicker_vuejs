@@ -41,7 +41,8 @@
     text-align: center;
   }
   .datepicker_days {
-    margin: 14px;
+    margin: 14px 14px 0;
+    height: $day-size * 5;
   }
   .datepicker_day {
     position: relative;
@@ -127,9 +128,44 @@
     float: left;
   }
 
+  .datepicker_actions {
+    text-align: right;
+    padding: 8px;
+  }
+
+  .datepicker_actions button {
+    border: none;
+    background-color: transparent;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    color: #00bdc4;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 500;
+    min-width: 88px;
+    line-height: 36px;
+    text-align: center;
+    -webkit-appearance: none;
+    transition: all 0.3s;
+    &:hover {
+      background-color: rgba(153, 153, 153, 0.2);
+    }
+  }
+
+  .datepicker-slide-transition {
+    opacity: 1;
+    transition: all 0.3s;
+    transform: translateY(0);
+  }
+
+  .datepicker-slide-leave, .datepicker-slide-enter {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
 </style>
 <template>
-  <div class="datepicker">
+  <div class="datepicker" v-if="visible" transition="datepicker-slide" @click.stop>
     <div class="datepicker_header">
       <div class="datepicker_year">
         {{ year }}
@@ -166,17 +202,19 @@
         </span>
       </div>
     </div>
-
     <div class="datepicker_actions">
-      <buton @click="">Cancel</buton>
-      <buton @click="submitDay">Ok</buton>
+      <button @click="cancel">Annuler</button>
+      <button @click="submit">Ok</button>
     </div>
   </div>
 </template>
 <script>
   import Month from '../modules/month'
   export default {
-    props: ['date'],
+    props: {
+      date: {},
+      visible: {type: Boolean, default: true}
+    },
     data () {
       return {
         days: ['L', 'M', 'M', 'J', 'V', 'S', 'D'],
@@ -207,6 +245,12 @@
           month = 11
         }
         this.month = new Month(month, year)
+      },
+      submit: function () {
+        this.$dispatch('change', this.date)
+      },
+      cancel: function () {
+        this.$dispatch('cancel')
       }
     },
     computed: {
